@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Button,
@@ -12,10 +11,11 @@ import {
   InputLabel,
   CircularProgress,
   Snackbar,
-  IconButton
+  IconButton,
 } from "@mui/material";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
+// ✅ Verifique se o backend está rodando corretamente em localhost:8000
 const API_URL = "http://localhost:8000";
 
 function App() {
@@ -27,16 +27,27 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ open: false, message: "" });
 
+  // ✅ Buscar testes na API ao carregar o componente
   useEffect(() => {
     fetchTests();
   }, []);
 
+  // ✅ Função para buscar os testes na API
   const fetchTests = async () => {
-    const response = await fetch(`${API_URL}/tests`);
-    const data = await response.json();
-    setTests(data);
+    try {
+      const response = await fetch(`${API_URL}/tests`);
+      if (!response.ok) {
+        throw new Error("Erro ao carregar os testes.");
+      }
+      const data = await response.json();
+      setTests(data);
+    } catch (error) {
+      console.error("Erro ao buscar testes:", error);
+      setFeedback({ open: true, message: "Erro ao carregar os testes." });
+    }
   };
 
+  // ✅ Função para criar um teste na API
   const createTest = async () => {
     setLoading(true);
     try {
@@ -50,36 +61,52 @@ function App() {
           difficulty,
         }),
       });
-      if (response.ok) {
-        setFeedback({ open: true, message: "Teste criado com sucesso!" });
-        fetchTests();
-        setPrompt("");
+      if (!response.ok) {
+        throw new Error("Erro ao criar teste.");
       }
+      setFeedback({ open: true, message: "Teste criado com sucesso!" });
+      fetchTests(); // 🔄 Atualizar a lista de testes após criação
+      setPrompt("");
     } catch (error) {
+      console.error("Erro ao criar teste:", error);
       setFeedback({ open: true, message: "Erro ao criar teste." });
     }
     setLoading(false);
   };
 
+  // ✅ Função para excluir um teste na API
   const deleteTest = async (id) => {
     try {
-      await fetch(`${API_URL}/tests/${id}`, { method: "DELETE" });
+      const response = await fetch(`${API_URL}/tests/${id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Erro ao excluir teste.");
+      }
       setFeedback({ open: true, message: "Teste excluído com sucesso!" });
-      fetchTests();
+      fetchTests(); // 🔄 Atualizar a lista após exclusão
     } catch (error) {
+      console.error("Erro ao excluir teste:", error);
       setFeedback({ open: true, message: "Erro ao excluir teste." });
     }
   };
 
+  // ✅ Função para copiar para área de transferência
   const copyToClipboard = (test) => {
     navigator.clipboard.writeText(JSON.stringify(test, null, 2));
-    setFeedback({ open: true, message: "Teste copiado para área de transferência!" });
+    setFeedback({
+      open: true,
+      message: "Teste copiado para área de transferência!",
+    });
   };
 
   return (
-    <Container style={{ padding: "20px", maxWidth: "600px" }}>
-      <h1 style={{ color: "#1976D2", textAlign: "center" }}>Gerador de Testes com IA</h1>
+    <Container style={{ padding: "20px", maxWidth: "800px" }}>
+      <h1 style={{ color: "#1976D2", textAlign: "center" }}>
+        Gerador de Testes com IA
+      </h1>
 
+      {/* ✅ Campo para o prompt */}
       <TextField
         fullWidth
         label="Prompt"
@@ -88,6 +115,7 @@ function App() {
         style={{ marginBottom: 10 }}
       />
 
+      {/* ✅ Campo para número de questões */}
       <TextField
         type="number"
         label="Número de questões"
@@ -97,6 +125,7 @@ function App() {
         fullWidth
       />
 
+      {/* ✅ Tipo de questão */}
       <FormControl fullWidth style={{ marginBottom: 10 }}>
         <InputLabel>Tipo de questão</InputLabel>
         <Select
@@ -109,6 +138,7 @@ function App() {
         </Select>
       </FormControl>
 
+      {/* ✅ Dificuldade */}
       <FormControl fullWidth style={{ marginBottom: 10 }}>
         <InputLabel>Dificuldade</InputLabel>
         <Select
@@ -121,6 +151,7 @@ function App() {
         </Select>
       </FormControl>
 
+      {/* ✅ Botão de criação */}
       <Button
         onClick={createTest}
         variant="contained"
@@ -131,6 +162,7 @@ function App() {
         {loading ? <CircularProgress size={24} /> : "Criar Teste"}
       </Button>
 
+      {/* ✅ Lista de testes */}
       {tests.map((test) => (
         <Card key={test.id} style={{ marginTop: 10, backgroundColor: "#f9f9f9" }}>
           <CardContent>
@@ -148,7 +180,7 @@ function App() {
         </Card>
       ))}
 
-      {/* Feedback Snackbar */}
+      {/* ✅ Feedback Snackbar */}
       <Snackbar
         open={feedback.open}
         autoHideDuration={3000}
