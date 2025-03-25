@@ -15,7 +15,6 @@ import {
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
-// ✅ Verifique se o backend está rodando corretamente em localhost:8000
 const API_URL = "http://localhost:8000";
 
 function App() {
@@ -26,13 +25,12 @@ function App() {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ open: false, message: "" });
+  const [provider, setProvider] = useState("gemini");
 
-  // ✅ Buscar testes na API ao carregar o componente
   useEffect(() => {
     fetchTests();
   }, []);
 
-  // ✅ Função para buscar os testes na API
   const fetchTests = async () => {
     try {
       const response = await fetch(`${API_URL}/tests`);
@@ -47,8 +45,19 @@ function App() {
     }
   };
 
-  // ✅ Função para criar um teste na API
   const createTest = async () => {
+    
+    if (
+      !prompt.trim() ||
+      !questionsCount ||
+      !questionType ||
+      !difficulty ||
+      !provider
+    ) {
+      setFeedback({ open: true, message: "Por favor, preencha todos os campos antes de criar o teste." });
+      return;
+    }    
+    
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/tests`, {
@@ -59,13 +68,14 @@ function App() {
           questions_count: questionsCount,
           question_type: questionType,
           difficulty,
+          provider, 
         }),
       });
       if (!response.ok) {
         throw new Error("Erro ao criar teste.");
       }
       setFeedback({ open: true, message: "Teste criado com sucesso!" });
-      fetchTests(); // 🔄 Atualizar a lista de testes após criação
+      fetchTests();
       setPrompt("");
     } catch (error) {
       console.error("Erro ao criar teste:", error);
@@ -74,7 +84,6 @@ function App() {
     setLoading(false);
   };
 
-  // ✅ Função para excluir um teste na API
   const deleteTest = async (id) => {
     try {
       const response = await fetch(`${API_URL}/tests/${id}`, {
@@ -84,20 +93,16 @@ function App() {
         throw new Error("Erro ao excluir teste.");
       }
       setFeedback({ open: true, message: "Teste excluído com sucesso!" });
-      fetchTests(); // 🔄 Atualizar a lista após exclusão
+      fetchTests();
     } catch (error) {
       console.error("Erro ao excluir teste:", error);
       setFeedback({ open: true, message: "Erro ao excluir teste." });
     }
   };
 
-  // ✅ Função para copiar para área de transferência
   const copyToClipboard = (test) => {
     navigator.clipboard.writeText(JSON.stringify(test, null, 2));
-    setFeedback({
-      open: true,
-      message: "Teste copiado para área de transferência!",
-    });
+    setFeedback({ open: true, message: "Teste copiado para área de transferência!" });
   };
 
   return (
@@ -106,7 +111,6 @@ function App() {
         Gerador de Testes com IA
       </h1>
 
-      {/* ✅ Campo para o prompt */}
       <TextField
         fullWidth
         label="Prompt"
@@ -115,7 +119,6 @@ function App() {
         style={{ marginBottom: 10 }}
       />
 
-      {/* ✅ Campo para número de questões */}
       <TextField
         type="number"
         label="Número de questões"
@@ -125,7 +128,6 @@ function App() {
         fullWidth
       />
 
-      {/* ✅ Tipo de questão */}
       <FormControl fullWidth style={{ marginBottom: 10 }}>
         <InputLabel>Tipo de questão</InputLabel>
         <Select
@@ -138,7 +140,6 @@ function App() {
         </Select>
       </FormControl>
 
-      {/* ✅ Dificuldade */}
       <FormControl fullWidth style={{ marginBottom: 10 }}>
         <InputLabel>Dificuldade</InputLabel>
         <Select
@@ -151,7 +152,14 @@ function App() {
         </Select>
       </FormControl>
 
-      {/* ✅ Botão de criação */}
+      <FormControl fullWidth style={{ marginBottom: 10 }}>
+        <InputLabel>IA Provedora</InputLabel>
+        <Select value={provider} onChange={(e) => setProvider(e.target.value)}>
+          <MenuItem value="gemini">Google Gemini</MenuItem>
+          <MenuItem value="openai">OpenAI (GPT)</MenuItem>
+        </Select>
+      </FormControl>
+
       <Button
         onClick={createTest}
         variant="contained"
@@ -162,25 +170,29 @@ function App() {
         {loading ? <CircularProgress size={24} /> : "Criar Teste"}
       </Button>
 
-      {/* ✅ Lista de testes */}
-      {tests.map((test) => (
-        <Card key={test.id} style={{ marginTop: 10, backgroundColor: "#f9f9f9" }}>
-          <CardContent>
-            <h2 style={{ color: "#1976D2" }}>{test.title}</h2>
-            <pre style={{ backgroundColor: "#eee", padding: 10, borderRadius: 5 }}>
-              {JSON.stringify(test.questions, null, 2)}
-            </pre>
-            <Button onClick={() => deleteTest(test.id)} color="secondary">
-              Excluir
-            </Button>
-            <IconButton onClick={() => copyToClipboard(test)}>
-              <ContentCopyIcon />
-            </IconButton>
-          </CardContent>
-        </Card>
-      ))}
+      {tests.length === 0 ? (
+        <p style={{ marginTop: 20, textAlign: "center", color: "#666" }}>
+          Não existem testes cadastrados!
+        </p>
+      ) : (
+        tests.map((test) => (
+          <Card key={test.id} style={{ marginTop: 10, backgroundColor: "#f9f9f9" }}>
+            <CardContent>
+              <h2 style={{ color: "#1976D2" }}>{test.title}</h2>
+              <pre style={{ backgroundColor: "#eee", padding: 10, borderRadius: 5 }}>
+                {JSON.stringify(test.questions, null, 2)}
+              </pre>
+              <Button onClick={() => deleteTest(test.id)} color="secondary">
+                Excluir
+              </Button>
+              <IconButton onClick={() => copyToClipboard(test)}>
+                <ContentCopyIcon />
+              </IconButton>
+            </CardContent>
+          </Card>
+        ))
+      )}
 
-      {/* ✅ Feedback Snackbar */}
       <Snackbar
         open={feedback.open}
         autoHideDuration={3000}
