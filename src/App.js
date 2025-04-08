@@ -26,6 +26,9 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ open: false, message: "" });
   const [provider, setProvider] = useState("gemini");
+  const [editingQuestionsId, setEditingQuestionsId] = useState(null);
+  const [editedQuestions, setEditedQuestions] = useState("");
+
 
   useEffect(() => {
     fetchTests();
@@ -105,6 +108,29 @@ function App() {
     setFeedback({ open: true, message: "Teste copiado para área de transferência!" });
   };
 
+  const saveEditedQuestions = async (testId) => {
+    try {
+      const parsedQuestions = JSON.parse(editedQuestions);
+      const response = await fetch(`${API_URL}/tests/${testId}/questions`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(parsedQuestions),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Erro ao atualizar questões.");
+      }
+  
+      setFeedback({ open: true, message: "Questões atualizadas com sucesso!" });
+      setEditingQuestionsId(null);
+      fetchTests();
+    } catch (error) {
+      console.error("Erro ao salvar questões editadas:", error);
+      setFeedback({ open: true, message: "Erro ao atualizar questões. Verifique o formato JSON." });
+    }
+  };
+  
+
   return (
     <Container style={{ padding: "20px", maxWidth: "800px" }}>
       <h1 style={{ color: "#1976D2", textAlign: "center" }}>
@@ -177,7 +203,7 @@ function App() {
       ) : (
         tests.map((test) => (
           <Card key={test.id} style={{ marginTop: 10, backgroundColor: "#f9f9f9" }}>
-            <CardContent>
+            {/* <CardContent>
               <h2 style={{ color: "#1976D2" }}>{test.title}</h2>
               <pre style={{ backgroundColor: "#eee", padding: 10, borderRadius: 5 }}>
                 {JSON.stringify(test.questions, null, 2)}
@@ -188,7 +214,68 @@ function App() {
               <IconButton onClick={() => copyToClipboard(test)}>
                 <ContentCopyIcon />
               </IconButton>
+            </CardContent> */}
+
+            <CardContent>
+              <h2 style={{ color: "#1976D2" }}>{test.title}</h2>
+
+              {editingQuestionsId === test.id ? (
+                <>
+                  <TextField
+                    multiline
+                    fullWidth
+                    minRows={6}
+                    label="Editar questões (formato JSON)"
+                    value={editedQuestions}
+                    onChange={(e) => setEditedQuestions(e.target.value)}
+                    style={{ marginBottom: 10 }}
+                  />
+                  <Button
+                    onClick={() => saveEditedQuestions(test.id)}
+                    variant="contained"
+                    color="primary"
+                    style={{ marginRight: 10 }}
+                  >
+                    Salvar
+                  </Button>
+                  <Button
+                    onClick={() => setEditingQuestionsId(null)}
+                    variant="outlined"
+                    color="secondary"
+                  >
+                    Cancelar
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <pre style={{ backgroundColor: "#eee", padding: 10, borderRadius: 5 }}>
+                    {JSON.stringify(test.questions, null, 2)}
+                  </pre>
+                  <Button onClick={() => deleteTest(test.id)} color="secondary">
+                    Excluir
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setEditedQuestions(JSON.stringify(test.questions, null, 2));
+                      setEditingQuestionsId(test.id);
+                    }}
+                    style={{ marginLeft: 10 }}
+                  >
+                    Editar Questões
+                  </Button>
+                  <IconButton onClick={() => copyToClipboard(test)}>
+                    <ContentCopyIcon />
+                  </IconButton>
+                </>
+              )}
             </CardContent>
+
+
+
+
+
+
+
           </Card>
         ))
       )}
