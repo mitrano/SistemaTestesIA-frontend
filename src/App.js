@@ -113,12 +113,32 @@ function App() {
     setUserAnswers((prev) => ({ ...prev, [`${testId}-${index}`]: value }));
   };
 
-  const validateAnswers = (testId, questions) => {
+  const validateAnswers = async (testId, questions) => {
     const results = {};
-    questions.forEach((q, idx) => {
+    for (let idx = 0; idx < questions.length; idx++) {
+      const q = questions[idx];
       const userAnswer = userAnswers[`${testId}-${idx}`];
-      results[idx] = userAnswer === q.answer;
-    });
+      if (q.type.toLowerCase() === "discursiva") {
+        try {
+          const response = await fetch(`${API_URL}/evaluate`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              question: q.question,
+              correct_answer: q.answer,
+              user_answer: userAnswer || ""
+            })
+          });
+          const data = await response.json();
+          results[idx] = data.score >= 0.9;
+          results[`score-${idx}`] = data.score;
+        } catch (err) {
+          results[idx] = false;
+        }
+      } else {
+        results[idx] = userAnswer === q.answer;
+      }
+    }
     setShowValidation((prev) => ({ ...prev, [testId]: results }));
   };
 
@@ -189,17 +209,31 @@ function App() {
                 {(test.questions?.questions || []).map((q, idx) => (
                   <div key={idx} style={{ marginBottom: 20 }}>
                     <Typography variant="subtitle1">{idx + 1}. {q.question}</Typography>
-                    <RadioGroup
-                      value={userAnswers[`${test.id}-${idx}`] || ""}
-                      onChange={(e) => handleAnswerChange(test.id, idx, e.target.value)}
-                    >
-                      {q.options.map((opt, i) => (
-                        <FormControlLabel key={i} value={opt} control={<Radio />} label={opt} />
-                      ))}
-                    </RadioGroup>
+                    {q.type.toLowerCase() === "discursiva" ? (
+                      <TextField
+                        fullWidth
+                        multiline
+                        minRows={3}
+                        placeholder="Digite sua resposta..."
+                        value={userAnswers[`${test.id}-${idx}`] || ""}
+                        onChange={(e) => handleAnswerChange(test.id, idx, e.target.value)}
+                        style={{ marginBottom: 10 }}
+                      />
+                    ) : (
+                      <RadioGroup
+                        value={userAnswers[`${test.id}-${idx}`] || ""}
+                        onChange={(e) => handleAnswerChange(test.id, idx, e.target.value)}
+                      >
+                        {q.options.map((opt, i) => (
+                          <FormControlLabel key={i} value={opt} control={<Radio />} label={opt} />
+                        ))}
+                      </RadioGroup>
+                    )}
                     {showValidation[test.id]?.[idx] !== undefined && (
                       <Typography color={showValidation[test.id][idx] ? "green" : "red"}>
-                        {showValidation[test.id][idx] ? "Resposta correta!" : `Resposta incorreta. Resposta correta: ${q.answer}`}
+                        {q.type.toLowerCase() === "discursiva"
+                          ? `Nota: ${(showValidation[test.id][`score-${idx}`] * 10).toFixed(1)}/10`
+                          : (showValidation[test.id][idx] ? "Resposta correta!" : `Resposta incorreta. Resposta correta: ${q.answer}`)}
                       </Typography>
                     )}
                   </div>
