@@ -274,11 +274,14 @@ function App() {
                   </div>
                 )}
 
-                {!processing[test.id] && showValidation[test.id]?.totalPossible > 0 && (
-                  <Typography variant="h6" style={{ marginTop: 12, color: "#1976D2" }}>
-                    Nota total: {showValidation[test.id].totalScore.toFixed(2)}/{showValidation[test.id].totalPossible.toFixed(2)}
-                  </Typography>
+                {!processing[test.id] &&
+                  showValidation[test.id]?.totalScore !== undefined &&
+                  showValidation[test.id]?.totalPossible !== undefined && (
+                    <Typography variant="h6" style={{ marginTop: 12, color: "#1976D2" }}>
+                      Nota total: {showValidation[test.id].totalScore.toFixed(2)}/{showValidation[test.id].totalPossible.toFixed(2)}
+                    </Typography>
                 )}
+
     
 
                 <Button onClick={() => deleteTest(test.id)} color="secondary">Excluir</Button>
