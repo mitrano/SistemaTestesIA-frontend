@@ -132,6 +132,7 @@ function App() {
           const data = await response.json();
           results[idx] = data.score >= 0.9;
           results[`score-${idx}`] = data.score;
+          results[`justification-${idx}`] = data.justification;
         } catch (err) {
           results[idx] = false;
         }
@@ -146,7 +147,6 @@ function App() {
     <Container style={{ padding: "20px", maxWidth: "800px" }}>
       <h1 style={{ color: "#1976D2", textAlign: "center" }}>Gerador de Testes com IA</h1>
 
-      {/* Formulário de criação */}
       <TextField fullWidth label="Prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)} style={{ marginBottom: 10 }} />
       <TextField type="number" label="Número de questões" value={questionsCount} onChange={(e) => setQuestionsCount(Number(e.target.value))} style={{ marginBottom: 10 }} fullWidth />
 
@@ -180,7 +180,6 @@ function App() {
         {loading ? <CircularProgress size={24} /> : "Criar Teste"}
       </Button>
 
-      {/* Lista de testes */}
       {tests.map((test) => (
         <Card key={test.id} style={{ marginTop: 20, backgroundColor: "#f9f9f9" }}>
           <CardContent>
@@ -230,11 +229,18 @@ function App() {
                       </RadioGroup>
                     )}
                     {showValidation[test.id]?.[idx] !== undefined && (
-                      <Typography color={showValidation[test.id][idx] ? "green" : "red"}>
-                        {q.type.toLowerCase() === "discursiva"
-                          ? `Nota: ${(showValidation[test.id][`score-${idx}`] * 10).toFixed(1)}/10`
-                          : (showValidation[test.id][idx] ? "Resposta correta!" : `Resposta incorreta. Resposta correta: ${q.answer}`)}
-                      </Typography>
+                      <div style={{ marginTop: 8 }}>
+                        <Typography color={showValidation[test.id][idx] ? "green" : "red"}>
+                          {q.type.toLowerCase() === "discursiva"
+                            ? `Nota: ${(showValidation[test.id][`score-${idx}`] ).toFixed(1)}/1.0`
+                            : (showValidation[test.id][idx] ? "Resposta correta!" : `Resposta incorreta. Resposta correta: ${q.answer}`)}
+                        </Typography>
+                        {q.type.toLowerCase() === "discursiva" && showValidation[test.id][`justification-${idx}`] && (
+                          <Typography variant="body2" style={{ marginTop: 4 }}>
+                            Justificativa: {showValidation[test.id][`justification-${idx}`]}
+                          </Typography>
+                        )}
+                      </div>
                     )}
                   </div>
                 ))}
