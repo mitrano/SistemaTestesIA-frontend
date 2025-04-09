@@ -16,6 +16,7 @@ import {
   Radio,
   FormControlLabel,
   Typography,
+  LinearProgress,
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
@@ -117,10 +118,15 @@ function App() {
   const validateAnswers = async (testId, questions) => {
     setShowValidation((prev) => ({ ...prev, [testId]: {} }));
     setProcessing((prev) => ({ ...prev, [testId]: true }));
+
     const results = {};
+    let score = 0;
+    let total = 0;
+
     for (let idx = 0; idx < questions.length; idx++) {
       const q = questions[idx];
       const userAnswer = userAnswers[`${testId}-${idx}`];
+
       if (q.type.toLowerCase() === "discursiva") {
         try {
           const response = await fetch(`${API_URL}/evaluate`, {
@@ -133,16 +139,28 @@ function App() {
             })
           });
           const data = await response.json();
-          results[idx] = data.score >= 0.9;
-          results[`score-${idx}`] = data.score;
+          const thisScore = Math.min(data.score, 1.0);
+          results[idx] = thisScore >= 0.9;
+          results[`score-${idx}`] = thisScore;
           results[`justification-${idx}`] = data.justification;
-        } catch (err) {
+          score += thisScore;
+          total += 1.0;
+        } catch {
           results[idx] = false;
+          results[`score-${idx}`] = 0;
+          total += 1.0;
         }
       } else {
-        results[idx] = userAnswer === q.answer;
+        const isCorrect = userAnswer === q.answer;
+        results[idx] = isCorrect;
+        score += isCorrect ? 1.0 : 0.0;
+        total += 1.0;
       }
     }
+
+    results.totalScore = score;
+    results.totalPossible = total;
+
     setShowValidation((prev) => ({ ...prev, [testId]: results }));
     setProcessing((prev) => ({ ...prev, [testId]: false }));
   };
@@ -249,6 +267,19 @@ function App() {
                     )}
                   </div>
                 ))}
+                {processing[test.id] && (
+                  <div style={{ marginBottom: 16 }}>
+                    <LinearProgress />
+                    <Typography variant="body2" color="textSecondary">Validando respostas...</Typography>
+                  </div>
+                )}
+
+                {!processing[test.id] && showValidation[test.id]?.totalPossible > 0 && (
+                  <Typography variant="h6" style={{ marginTop: 12, color: "#1976D2" }}>
+                    Nota total: {showValidation[test.id].totalScore.toFixed(2)}/{showValidation[test.id].totalPossible.toFixed(2)}
+                  </Typography>
+                )}
+    
 
                 <Button onClick={() => deleteTest(test.id)} color="secondary">Excluir</Button>
                 <Button onClick={() => {
