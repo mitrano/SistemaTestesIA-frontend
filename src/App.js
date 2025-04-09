@@ -34,6 +34,7 @@ function App() {
   const [editedQuestions, setEditedQuestions] = useState("");
   const [userAnswers, setUserAnswers] = useState({});
   const [showValidation, setShowValidation] = useState({});
+  const [processing, setProcessing] = useState({});
 
   useEffect(() => {
     fetchTests();
@@ -114,6 +115,8 @@ function App() {
   };
 
   const validateAnswers = async (testId, questions) => {
+    setShowValidation((prev) => ({ ...prev, [testId]: {} }));
+    setProcessing((prev) => ({ ...prev, [testId]: true }));
     const results = {};
     for (let idx = 0; idx < questions.length; idx++) {
       const q = questions[idx];
@@ -141,6 +144,7 @@ function App() {
       }
     }
     setShowValidation((prev) => ({ ...prev, [testId]: results }));
+    setProcessing((prev) => ({ ...prev, [testId]: false }));
   };
 
   return (
@@ -228,11 +232,12 @@ function App() {
                         ))}
                       </RadioGroup>
                     )}
-                    {showValidation[test.id]?.[idx] !== undefined && (
+                    {processing[test.id] && <Typography color="textSecondary">Processando resposta...</Typography>}
+                    {showValidation[test.id]?.[idx] !== undefined && !processing[test.id] && (
                       <div style={{ marginTop: 8 }}>
                         <Typography color={showValidation[test.id][idx] ? "green" : "red"}>
                           {q.type.toLowerCase() === "discursiva"
-                            ? `Nota: ${(showValidation[test.id][`score-${idx}`] ).toFixed(1)}/1.0`
+                            ? `Nota: ${showValidation[test.id][`score-${idx}`].toFixed(2)}/1.0`
                             : (showValidation[test.id][idx] ? "Resposta correta!" : `Resposta incorreta. Resposta correta: ${q.answer}`)}
                         </Typography>
                         {q.type.toLowerCase() === "discursiva" && showValidation[test.id][`justification-${idx}`] && (
