@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Dialog, DialogTitle, DialogContent } from "@mui/material";
 import {
   Container,
   Button,
@@ -36,6 +37,19 @@ function App() {
   const [userAnswers, setUserAnswers] = useState({});
   const [showValidation, setShowValidation] = useState({});
   const [processing, setProcessing] = useState({});
+
+  const [openPromptModal, setOpenPromptModal] = useState(false);
+  const [selectedPrompt, setSelectedPrompt] = useState("");
+
+  const handleOpenPromptModal = (promptText) => {
+    setSelectedPrompt(promptText);
+    setOpenPromptModal(true);
+  };
+
+  const handleClosePromptModal = () => {
+    setOpenPromptModal(false);
+    setSelectedPrompt("");
+  };
 
   useEffect(() => {
     fetchTests();
@@ -205,7 +219,15 @@ function App() {
       {tests.map((test) => (
         <Card key={test.id} style={{ marginTop: 20, backgroundColor: "#f9f9f9" }}>
           <CardContent>
-            <h2 style={{ color: "#1976D2" }}>{test.title}</h2>
+
+          <Typography
+            variant="h6"
+            style={{ color: "#1976D2", cursor: "pointer", textDecoration: "underline" }}
+            onClick={() => handleOpenPromptModal(test.title)}
+          >
+            {test.title ? `${test.title.split("\n")[0].slice(0, 80)}${test.title.length > 80 ? '...' : ''}` : 'Prompt não disponível'}
+          </Typography>
+
 
             {editingQuestionsId === test.id ? (
               <>
@@ -303,8 +325,17 @@ function App() {
         onClose={() => setFeedback({ open: false, message: "" })}
         message={feedback.message}
       />
+
+      <Dialog open={openPromptModal} onClose={handleClosePromptModal} maxWidth="md" fullWidth>
+        <DialogTitle>Prompt Completo</DialogTitle>
+        <DialogContent>
+          <Typography style={{ whiteSpace: "pre-wrap" }}>{selectedPrompt}</Typography>
+        </DialogContent>
+      </Dialog>
+
+
     </Container>
   );
 }
 
-export default App;
+export default App; 
