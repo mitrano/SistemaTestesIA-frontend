@@ -31,7 +31,7 @@ function App() {
   const [tests, setTests] = useState([]);
   const [loading, setLoading] = useState(false);
   const [feedback, setFeedback] = useState({ open: false, message: "" });
-  const [provider, setProvider] = useState("gemini");
+  const [provider] = useState("openai");
   const [editingQuestionsId, setEditingQuestionsId] = useState(null);
   const [editedQuestions, setEditedQuestions] = useState("");
   const [userAnswers, setUserAnswers] = useState({});
@@ -201,14 +201,6 @@ function App() {
           <MenuItem value="easy">Fácil</MenuItem>
           <MenuItem value="medium">Médio</MenuItem>
           <MenuItem value="hard">Difícil</MenuItem>
-        </Select>
-      </FormControl>
-
-      <FormControl fullWidth style={{ marginBottom: 10 }}>
-        <InputLabel>IA Provedora</InputLabel>
-        <Select value={provider} onChange={(e) => setProvider(e.target.value)}>
-          <MenuItem value="gemini">Google Gemini</MenuItem>
-          <MenuItem value="openai">OpenAI (GPT)</MenuItem>
         </Select>
       </FormControl>
 
