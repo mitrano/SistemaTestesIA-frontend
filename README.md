@@ -22,9 +22,8 @@ Facilitar a criação de questionários personalizados com o apoio de IA, otimiz
 ## Diagram do Sistema
 
 <p align="center">
-  <img src="public/diagramadosistema" alt="Diagrama" width="500"/>
+  <img src="public/Diagramadosistema.jpg" alt="Diagrama da Arquitetura do Sistema" width="600">
 </p>
-
 
 ---
 
@@ -87,10 +86,10 @@ Backend: http://localhost:8000 (ou a porta definida)
 
 | Método | Rota                  | Descrição                                |
 |--------|-----------------------|-------------------------------------------|
-| GET    | `/quizzes`            | Lista todos os questionários              |
-| POST   | `/quizzes`            | Cria um novo questionário com base na IA  |
-| PUT    | `/quizzes/:id`        | Atualiza um questionário existente        |
-| DELETE | `/quizzes/:id`        | Remove um questionário                    |
+| GET    | `/tests`            | Lista todos os questionários              |
+| POST   | `/tests`            | Cria um novo questionário com base na IA  |
+| PUT    | `/tests/:id`        | Atualiza um questionário existente        |
+| DELETE | `/tests/:id`        | Remove um questionário                    |
 
 ---
 
