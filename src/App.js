@@ -21,8 +21,8 @@ import {
 } from "@mui/material";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
-// const API_URL = "http://localhost:8000";
-const API_URL = "http://backend:8000";
+const API_URL = "http://localhost:8000";
+// const API_URL = "http://backend:8000";
 
 
 function App() {
