@@ -19,6 +19,15 @@ Facilitar a criação de questionários personalizados com o apoio de IA, otimiz
 
 ---
 
+## Diagram do Sistema
+
+<p align="center">
+  <img src="public/diagramadosistema" alt="Diagrama" width="500"/>
+</p>
+
+
+---
+
 ## 📁 Estrutura do Projeto
 
 ```
