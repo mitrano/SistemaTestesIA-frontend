@@ -1,70 +1,118 @@
-# Getting Started with Create React App
+# Sistema de Geração de Testes com IA
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este projeto é um sistema frontend desenvolvido em React para facilitar a criação automatizada de questionários a partir de uma IA. A aplicação se comunica com uma API backend para gerar, exibir e avaliar questões, integrando inteligência artificial ao processo educacional.
 
-## Available Scripts
+## 🎯 Objetivo
 
-In the project directory, you can run:
+Facilitar a criação de questionários personalizados com o apoio de IA, otimizando o tempo de professores e profissionais da educação, e promovendo experiências de aprendizagem adaptativas e modernas.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🛠️ Tecnologias Utilizadas
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **React** (Frontend)
+- **JavaScript**
+- **Docker**
+- **CSS**
+- **OpenAI API** (Integração com IA)
+- **Node Package Manager (npm)**
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📁 Estrutura do Projeto
 
-### `npm run build`
+```
+SistemaTestesIA-frontend
+├── public/
+│   ├── index.html
+│   └── ...
+├── src/
+│   ├── App.js
+│   ├── index.js
+│   └── ...
+├── Dockerfile
+├── package.json
+└── README.md
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🚀 Como Executar o Projeto com Docker Compose
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 1. Preparação da Estrutura
 
-### `npm run eject`
+Crie uma pasta localmente e insira nela:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- Os arquivos `docker-compose.yml` e `.env` (fornecidos na entrega do projeto através da plataforma da faculdade).
+- Clone este repositório (`SistemaTestesIA-frontend`) dentro da pasta.
+- Clone também o repositório do backend (ex: `SistemaTestesIA-backend`).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```
+meu-projeto/
+├── docker-compose.yml
+├── .env
+├── SistemaTestesIA-frontend/
+└── SistemaTestesIA-backend/
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### 2. Executar com Docker Compose
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+No terminal, dentro da pasta raiz (`meu-projeto`):
 
-## Learn More
+```bash
+docker-compose up --build
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+A aplicação estará disponível em:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+Frontend: http://localhost:3000
+Backend: http://localhost:8000 (ou a porta definida)
+```
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 🔄 Principais Endpoints (Frontend)
 
-### Analyzing the Bundle Size
+> A aplicação frontend consome os seguintes endpoints disponibilizados pela API backend:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+| Método | Rota                  | Descrição                                |
+|--------|-----------------------|-------------------------------------------|
+| GET    | `/quizzes`            | Lista todos os questionários              |
+| POST   | `/quizzes`            | Cria um novo questionário com base na IA  |
+| PUT    | `/quizzes/:id`        | Atualiza um questionário existente        |
+| DELETE | `/quizzes/:id`        | Remove um questionário                    |
 
-### Making a Progressive Web App
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+## 🌐 Integração com API Externa (OpenAI)
 
-### Advanced Configuration
+A aplicação se integra com a API da OpenAI para gerar as perguntas com base em temas definidos pelo usuário.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### 📌 Informações da API
 
-### Deployment
+- **Provedor:** OpenAI
+- **Licença:** Proprietária, uso sob assinatura. Forneci a chave com créditos da minha assinatura.
+- **Cadastro:** Necessário possuir uma conta em [https://platform.openai.com/](https://platform.openai.com/)
+- **Endpoint Utilizado:** `https://api.openai.com/v1/chat/completions`
+- **Modelo:** `gpt-4` ou `gpt-3.5-turbo`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+---
 
-### `npm run build` fails to minify
+## 📦 Instalação Local sem Docker (alternativa)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```bash
+npm install
+npm start
+```
+
+A aplicação estará disponível em: [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 👨‍🏫 Autoria
+
+Este projeto foi desenvolvido como parte da avaliação da pós-graduação em Desenvolvimento de Sistemas com Inteligência Artificial.
+
+**Autor:** Ricardo Mitrano  
+**Data:** Abril de 2025
