@@ -8,6 +8,30 @@ Facilitar a criação de questionários personalizados com o apoio de IA, otimiz
 
 ---
 
+## ✅ Funcionalidades do Sistema
+
+O **SistemaTestesIA** oferece um conjunto de funcionalidades voltadas à geração e gerenciamento de testes com auxílio de Inteligência Artificial. Abaixo estão listadas as principais capacidades do sistema:
+
+- 🔍 **Geração de Testes com IA**  
+  Permite ao usuário gerar automaticamente um conjunto de questões com base em um tema definido, utilizando a API da OpenAI.
+
+- 🧠 **Personalização de Parâmetros**  
+  O usuário pode configurar:
+  - O número de questões desejadas
+  - O tipo de questão (múltipla escolha, discursiva ou mista)
+  - O nível de dificuldade (fácil, médio ou difícil)
+
+- 📋 **Visualização e Listagem de Testes Criados**  
+  Todos os testes gerados são listados para fácil acesso e reutilização.
+
+- 🗑️ **Remoção de Testes**  
+  Permite excluir testes que não são mais necessários.
+
+- ✏️ **Avaliação de Respostas**  
+  O sistema avalia automaticamente as respostas do usuário às questões de múltipla escolha e fornece um feedback com nota e justificativa.
+
+---
+
 ## 🛠️ Tecnologias Utilizadas
 
 - **React** (Frontend)
@@ -30,7 +54,7 @@ Facilitar a criação de questionários personalizados com o apoio de IA, otimiz
 ## 📁 Estrutura do Projeto
 
 ```
-SistemaTestesIA-frontend
+frontend
 ├── public/
 │   ├── index.html
 │   └── ...
@@ -56,11 +80,13 @@ Crie uma pasta localmente e insira nela:
 - Clone também o repositório do backend (ex: `SistemaTestesIA-backend`).
 
 ```
-meu-projeto/
-├── docker-compose.yml
+/sua-pasta-projeto
 ├── .env
-├── SistemaTestesIA-frontend/
-└── SistemaTestesIA-backend/
+├── docker-compose.yml
+├── backend/           # Clonado do GitHub
+│   └── ...
+└── frontend/          # Clonado do GitHub
+    └── ...
 ```
 
 ### 2. Executar com Docker Compose
