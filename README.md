@@ -120,7 +120,5 @@ A aplicação estará disponível em: [http://localhost:3000](http://localhost:3
 
 ## 👨‍🏫 Autoria
 
-Este projeto foi desenvolvido como parte da avaliação da pós-graduação em Desenvolvimento de Sistemas com Inteligência Artificial.
-
 **Autor:** Ricardo Mitrano  
 **Data:** Abril de 2025
