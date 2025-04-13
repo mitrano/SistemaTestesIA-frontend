@@ -22,25 +22,38 @@ import {
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 const API_URL = "http://localhost:8000";
-// const API_URL = "http://backend:8000";
-
 
 function App() {
+// Prompt base que será usado para gerar o teste com IA
   const [prompt, setPrompt] = useState("");
+// Número de questões que serão geradas
   const [questionsCount, setQuestionsCount] = useState(5);
+// Tipo de questão: múltipla escolha, discursiva ou mista
   const [questionType, setQuestionType] = useState("multiple_choice");
+// Nível de dificuldade das questões
   const [difficulty, setDifficulty] = useState("medium");
+// Lista de testes carregados da API
   const [tests, setTests] = useState([]);
+// Indica se a criação do teste está em andamento
   const [loading, setLoading] = useState(false);
+// Estado para exibir mensagens de feedback (sucesso/erro)
   const [feedback, setFeedback] = useState({ open: false, message: "" });
+// Provedor fixo da IA (atualmente OpenAI)
   const [provider] = useState("openai");
+// ID do teste que está com perguntas sendo editadas
   const [editingQuestionsId, setEditingQuestionsId] = useState(null);
+// Texto JSON com perguntas sendo editadas
   const [editedQuestions, setEditedQuestions] = useState("");
+// Armazena as respostas fornecidas pelo usuário
   const [userAnswers, setUserAnswers] = useState({});
+// Armazena os resultados de validação das respostas
   const [showValidation, setShowValidation] = useState({});
+// Indica se um teste está sendo processado no momento
   const [processing, setProcessing] = useState({});
 
+// Estado para controlar abertura do modal com prompt completo
   const [openPromptModal, setOpenPromptModal] = useState(false);
+// Texto do prompt selecionado para exibição no modal
   const [selectedPrompt, setSelectedPrompt] = useState("");
 
   const handleOpenPromptModal = (promptText) => {
@@ -57,6 +70,7 @@ function App() {
     fetchTests();
   }, []);
 
+// Carrega todos os testes da API ao iniciar
   const fetchTests = async () => {
     try {
       const response = await fetch(`${API_URL}/tests`);
@@ -69,6 +83,7 @@ function App() {
     }
   };
 
+// Cria um novo teste com base no prompt e nas opções fornecidas
   const createTest = async () => {
     if (!prompt.trim() || !questionsCount || !questionType || !difficulty || !provider) {
       setFeedback({ open: true, message: "Por favor, preencha todos os campos." });
@@ -92,6 +107,7 @@ function App() {
     setLoading(false);
   };
 
+// Exclui um teste da base de dados
   const deleteTest = async (id) => {
     try {
       const response = await fetch(`${API_URL}/tests/${id}`, { method: "DELETE" });
@@ -104,11 +120,13 @@ function App() {
     }
   };
 
+// Copia o conteúdo de um teste para a área de transferência
   const copyToClipboard = (test) => {
     navigator.clipboard.writeText(JSON.stringify(test, null, 2));
     setFeedback({ open: true, message: "Teste copiado para área de transferência!" });
   };
 
+// Salva as alterações feitas no JSON de perguntas de um teste
   const saveEditedQuestions = async (testId) => {
     try {
       const parsedQuestions = JSON.parse(editedQuestions);
@@ -127,10 +145,12 @@ function App() {
     }
   };
 
+// Atualiza a resposta fornecida pelo usuário para uma questão
   const handleAnswerChange = (testId, index, value) => {
     setUserAnswers((prev) => ({ ...prev, [`${testId}-${index}`]: value }));
   };
 
+// Valida as respostas fornecidas pelo usuário, incluindo correção automática
   const validateAnswers = async (testId, questions) => {
     setShowValidation((prev) => ({ ...prev, [testId]: {} }));
     setProcessing((prev) => ({ ...prev, [testId]: true }));
@@ -188,9 +208,15 @@ function App() {
       <TextField fullWidth label="Prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)} style={{ marginBottom: 10 }} />
       <TextField type="number" label="Número de questões" value={questionsCount} onChange={(e) => setQuestionsCount(Number(e.target.value))} style={{ marginBottom: 10 }} fullWidth />
 
-      <FormControl fullWidth style={{ marginBottom: 10 }}>
-        <InputLabel>Tipo de questão</InputLabel>
-        <Select value={questionType} onChange={(e) => setQuestionType(e.target.value)}>
+      <FormControl fullWidth style={{ marginBottom: 10 }}>        
+        <InputLabel id="label-question-type">Tipo de questão</InputLabel>
+        <Select
+          labelId="label-question-type"
+          label="Tipo de questão"
+          value={questionType}
+          onChange={(e) => setQuestionType(e.target.value)}
+        >
+          
           <MenuItem value="multiple_choice">Múltipla escolha</MenuItem>
           <MenuItem value="discursive">Discursiva</MenuItem>
           <MenuItem value="mixed">Mista</MenuItem>
@@ -198,13 +224,19 @@ function App() {
       </FormControl>
 
       <FormControl fullWidth style={{ marginBottom: 10 }}>
-        <InputLabel>Dificuldade</InputLabel>
-        <Select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
+        <InputLabel id="label-difficulty">Dificuldade</InputLabel>
+        <Select
+          labelId="label-difficulty"
+          label="Dificuldade"
+          value={difficulty}
+          onChange={(e) => setDifficulty(e.target.value)}
+        >
           <MenuItem value="easy">Fácil</MenuItem>
           <MenuItem value="medium">Médio</MenuItem>
           <MenuItem value="hard">Difícil</MenuItem>
         </Select>
       </FormControl>
+
 
       <Button onClick={createTest} variant="contained" color="primary" style={{ marginTop: 10 }} disabled={loading}>
         {loading ? <CircularProgress size={24} /> : "Criar Teste"}
