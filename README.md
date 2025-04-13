@@ -43,7 +43,7 @@ O **SistemaTestesIA** oferece um conjunto de funcionalidades voltadas à geraç�
 
 ---
 
-## Diagram do Sistema
+## Diagrama do Sistema
 
 <p align="center">
   <img src="public/Diagramadosistema.jpg" alt="Diagrama da Arquitetura do Sistema" width="600">
