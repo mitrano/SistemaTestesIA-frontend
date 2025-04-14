@@ -146,5 +146,7 @@ A aplicação estará disponível em: [http://localhost:3000](http://localhost:3
 
 ## 👨‍🏫 Autoria
 
-**Autor:** Ricardo Mitrano  
-**Data:** Abril de 2025
+**Ricardo Mitrano**
+Aluno da Pós-Graduação em Desenvolvimento Fullstack da PUC-Rio
+Módulo Backend Avançado
+Abril/2025
