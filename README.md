@@ -147,6 +147,9 @@ A aplicação estará disponível em: [http://localhost:3000](http://localhost:3
 ## 👨‍🏫 Autoria
 
 **Ricardo Mitrano**
+
 Aluno da Pós-Graduação em Desenvolvimento Fullstack da PUC-Rio
+
 Módulo Backend Avançado
+
 Abril/2025
